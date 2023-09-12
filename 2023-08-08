@@ -1,0 +1,69 @@
+attach(sauces)
+attach(episodes)
+library(dplyr)
+library(tidyverse)
+library(ggpubr)
+library(jpeg)
+library(png)
+library(ggimage)
+library(imager)
+
+#filter out contestants who did not finish
+
+losers<- episodes |>
+  filter(finished =="FALSE") |>
+  select(original_release, guest)
+
+losers <-losers[-7,]
+
+#set up plot
+losers_p <-losers |>
+  ggplot(aes(x=original_release, y=guest))+
+  geom_point()
+
+losers_p
+
+#set path to jpeg files
+
+sPath = "/Users/username/Desktop/hotsauce/"
+
+#create vectors with files
+
+chance <- paste0(sPath, "Chance the Rapper.jpeg")
+dj <- paste0(sPath, "DJ Khaled.jpeg")
+e_40 <- paste0(sPath, "E-40.jpeg")
+eric <- paste0(sPath, "Eric Andre.jpeg")
+jim <- paste0(sPath, "Jim Gaffigan.jpeg")
+lil <- paste0(sPath, "Lil Yachty.jpeg")
+mike <- paste0(sPath, "Mike Epps.jpeg")
+pusha <- paste0(sPath, "Pusha T.jpeg")
+quavo <- paste0(sPath, "Quavo.jpeg")
+ricky <- paste0(sPath, "Ricky Gervais.jpeg")
+rob <- paste0(sPath, "Roby Corddry.jpeg")
+shaq <- paste0(sPath, "Shaq.jpeg")
+taraj <- paste0(sPath, "Taraj P. Henson.jpeg")
+tony <- paste0(sPath, "Tony Yayo.jpeg")
+
+
+#create new vectors and data frame
+
+contestant <- c("Chance the Rapper", "DJ Khaled", "E-40", "Eric Andre", "Jim Gaffigan", "Lil Yachty", "Mike Epps", "Pusha T", "Quavo", "Ricky Gervais", "Roby Corddry", "Shaq", "Taraj P. Henson", "Tony Yayo")
+
+episode_date <- as.Date(c("2019-11-21", "2015-10-22", "2018-11-08", "2020-07-09", "2016-06-23", "2018-11-01", "2016-06-21", "2022-03-24", "2021-06-10", "2017-02-09", "2016-07-21", "2019-03-14", "2018-01-18","2015-03-12"))
+
+Images <- c(chance, dj, e_40, eric, jim, lil, mike, pusha, quavo, ricky, rob, shaq, taraj, tony)
+
+df <- data.frame(contestant, episode_date, Images)
+
+#plot
+pl <-ggplot(df, aes(x = episode_date, y = contestant, image = Images))
+
+pl <- pl + geom_point()
+pl <- pl + geom_image(size = 0.10)
+pl + 
+  scale_y_discrete(expand = expansion(add = 2)) +
+  labs(title = "Hot Ones Hall of Shame",
+       subtitle = "A time line of contestants who could not finish all 10 wings from 2016 - 2022.",
+       x = "Episode Date",
+       y = "Contestants") +
+  theme_minimal()
