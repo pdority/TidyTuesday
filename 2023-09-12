@@ -1,0 +1,113 @@
+library(tidytuesdayR)
+library(dplyr)
+library(tidyverse)
+library(rvest)
+library(magrittr)
+library(ggmap)
+library(stringr)
+
+tuesdata <- tidytuesdayR::tt_load(2023, week = 37)
+
+all_countries <- tuesdata$all_countries
+country_regions <- tuesdata$country_regions
+global_human_day <- tuesdata$global_human_day
+global_economic_activity <- tuesdata$global_economic_activity
+
+colnames(all_countries)
+colnames(country_regions)
+colnames(global_human_day)
+colnames(global_economic_activity)
+
+glimpse(all_countries)
+summary(all_countries)
+
+#view sub cat time spent, day
+ggplot(global_human_day, aes(hoursPerDay, Subcategory)) +
+  geom_col()
+  
+#econpmic view
+ggplot(global_economic_activity, aes(hoursPerDay, Subcategory)) +
+  geom_col()
+
+
+#data regarding childcare
+childcare<- all_countries |>
+  filter(Subcategory == "Physical child care")
+
+childcare_df <- data.frame(childcare)
+
+#innerjoin childcare countries with their conuntry name
+innerjoinDF <- inner_join(
+  childcare_df,
+  country_regions,
+  by = "country_iso3"
+)
+
+#select columns needed
+childcare_country <- innerJoinDf |>
+  select(Subcategory, hoursPerDayCombined, country_name)
+
+#convert hours to minutes
+childcare_country<- childcare_country |>
+  mutate(minutesperday = hoursPerDayCombined * 60)
+
+#most around 20 minutes
+hist(childcare_country$minutesperday)
+
+#load world map and countries
+
+map.world <- map_data("world")
+map.world
+
+#compare data set country names with map names
+map_names<- data.frame(unique(map.world$region))
+childcare_names <- data.frame(childcare_country$region )
+
+
+#rename in childcare_country for join
+
+childcare_country <- childcare_country |>
+  rename("region" = "country_name")
+
+#clean country names in data set to match mapping data set.
+
+childcare_country$region <- recode(childcare_country$region,"Antigua and Barbuda" = "Antigua",
+"Bolivia (Plurinational State of)" = "Bolivia", 
+"Brunei Darussalam" = "Brunei", 
+"Micronesia (Federated States of)" = "Micronesia", "United Kingdom of Great Britain and Northern Ireland" = "UK", 
+"Equatorial Guinea" = "Guinea", 
+"China, Hong Kong Special Administrative Region" = "China", 
+"Iran (Islamic Republic of)" = "Iran", 
+"Lao People's Democratic Republic" = "Lao", 
+"China, Macao Special Administrative Region" = "Macao", "Republic of Moldova" = "Moldova", 
+"Democratic People's Republic of Korea" = "South Korea", "State of Palestine" = "Palestine", 
+"Russian Federation" = "Russia", 
+"Syrian Arab Republic" = "Syria", 
+"Trinidad and Tobago" = "Trinidad", 
+"United Republic of Tanzania" = "Tanzania", 
+"United States of America" = "USA", 
+"Saint Vincent and the Grenadines" = "Saint Vincent", "Venezuela (Bolivarian Republic of)" = "Venezuela", "United States Virgin Islands" = "Virgin Islands")
+
+map_joined <- left_join(map.world, childcare_country, by ='region')
+
+map_joined <- map_joined %>% mutate(fill_flg = ifelse(is.na(rank),F,T))
+head(map_joined)
+
+
+ggplot() +
+  geom_polygon(data = map_joined, aes(x = long, y = lat, group = group, fill = minutesperday)) +
+  scale_fill_continuous(type="viridis")+
+  labs(title = 'Minutes Per Day Doing Physical Childcare'
+       ,subtitle = "A weighted average of the minutes per day, around the world, spent doing physical childcare.",
+       fill = "Minutes Per Day") +
+  theme(text = element_text(family = "Gill Sans", color = "slategray")
+        ,panel.background = element_rect(fill = "mintcream")
+        ,plot.background = element_rect(fill = "mintcream")
+        ,panel.grid = element_blank()
+        ,plot.title = element_text(size = 20)
+        ,plot.subtitle = element_text(size = 10)
+        ,axis.text = element_blank()
+        ,axis.title = element_blank()
+        ,axis.ticks = element_blank()
+        ,legend.background = element_rect(fill="mintcream")
+  )
