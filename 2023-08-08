@@ -1,5 +1,3 @@
-attach(sauces)
-attach(episodes)
 library(dplyr)
 library(tidyverse)
 library(ggpubr)
@@ -7,6 +5,11 @@ library(jpeg)
 library(png)
 library(ggimage)
 library(imager)
+
+tuesdata <- tidytuesdayR::tt_load('2023-08-08')
+episodes <- tuesdata$episodes
+sauces <- tuesdata$sauces
+seasons <- tuesdata$seasons
 
 #filter out contestants who did not finish
 
@@ -25,7 +28,7 @@ losers_p
 
 #set path to jpeg files
 
-sPath = "/Users/username/Desktop/hotsauce/"
+sPath = "/Users/USERNAME/Desktop/hotsauce/"
 
 #create vectors with files
 
@@ -63,7 +66,7 @@ pl <- pl + geom_image(size = 0.10)
 pl + 
   scale_y_discrete(expand = expansion(add = 2)) +
   labs(title = "Hot Ones Hall of Shame",
-       subtitle = "A time line of contestants who could not finish all 10 wings from 2016 - 2022.",
+       subtitle = "A time line of contestants who could not finish all 10 wings, from 2015 - 2022.",
        x = "Episode Date",
        y = "Contestants") +
   theme_minimal()
