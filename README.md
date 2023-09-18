@@ -6,4 +6,4 @@ Visual from 8/1/2023
 
 8/8/2023 Hot Ones- Hall of Shame.
 
-<img width="1192" alt="Screen Shot 2023-09-12 at 9 13 03 AM" src="https://github.com/pdority/TidyTuesday/assets/130414977/1335de71-a3c3-4a5c-b346-1d22792dd4a9">
+<img width="1193" alt="Screen Shot 2023-09-18 at 12 24 14 AM" src="https://github.com/pdority/TidyTuesday/assets/130414977/40c13d21-ff8b-4461-8375-2dcac427818f">
